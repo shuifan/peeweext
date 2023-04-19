@@ -10,8 +10,9 @@ from .validation import ValidationError
 
 
 class Peeweext:
-    def __init__(self, ns='PW_'):
+    def __init__(self, ns='PW_', try_setup_celery=True):
         self.ns = ns
+        self.try_setup_celery = try_setup_celery
 
     def init_app(self, app):
         config = app.config.get_namespace(self.ns)
@@ -19,7 +20,8 @@ class Peeweext:
             config.get('model', 'peeweext.model.Model'))
         conn_params = config.get('conn_params', {})
         self.database = db_url.connect(config['db_url'], **conn_params)
-        self._try_setup_celery()
+        if self.try_setup_celery:
+            self._try_setup_celery()
 
     def _get_db(self):
         return self.database
